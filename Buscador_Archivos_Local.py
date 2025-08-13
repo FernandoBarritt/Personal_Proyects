@@ -236,3 +236,52 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+import os
+import difflib
+
+# Funciones básicas del buscador
+def indexar_archivos(directorio):
+    archivos = []
+    for carpeta, _, ficheros in os.walk(directorio):
+        for fichero in ficheros:
+            archivos.append(os.path.join(carpeta, fichero))
+    return archivos
+
+def buscar_archivos(archivos, termino):
+    resultados = difflib.get_close_matches(termino, archivos, n=10, cutoff=0.3)
+    return resultados
+
+# Interfaz de menú
+def menu():
+    print("=== Buscador Local de Archivos ===")
+    carpeta = input("Introduce la ruta de la carpeta a indexar: ")
+    if not os.path.isdir(carpeta):
+        print("Ruta no válida.")
+        return
+
+    archivos = indexar_archivos(carpeta)
+    print(f"Se han indexado {len(archivos)} archivos.")
+
+    while True:
+        print("\n1. Buscar archivo")
+        print("2. Salir")
+        opcion = input("Selecciona una opción: ")
+
+        if opcion == "1":
+            termino = input("Introduce el término de búsqueda: ")
+            resultados = buscar_archivos(archivos, termino)
+            if resultados:
+                print("\nCoincidencias encontradas:")
+                for r in resultados:
+                    print(r)
+            else:
+                print("No se encontraron coincidencias.")
+        elif opcion == "2":
+            print("Saliendo...")
+            break
+        else:
+            print("Opción inválida.")
+
+if __name__ == "__main__":
+    menu()
